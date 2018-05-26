@@ -17,7 +17,7 @@ public class WeatherData {
     private Integer count;
     @SerializedName("list")
     @Expose
-    private java.util.List<com.example.List> list = null;
+    private java.util.List<List> list = null;
 
     public String getMessage() {
         return message;
@@ -43,11 +43,11 @@ public class WeatherData {
         this.count = count;
     }
 
-    public java.util.List<com.example.List> getList() {
+    public java.util.List<List> getList() {
         return list;
     }
 
-    public void setList(java.util.List<com.example.List> list) {
+    public void setList(java.util.List<List> list) {
         this.list = list;
     }
 
