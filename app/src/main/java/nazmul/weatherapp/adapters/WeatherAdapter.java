@@ -34,7 +34,7 @@ public class WeatherAdapter extends ArrayAdapter<List> {
         conditionText.setText(list.getWeather().get(0).getMain());
         char degree = '\u00B0';
         double temp=list.getMain().getTemp()-273.15;
-        temperatureText.setText(String.format("%.1f",temp)+""+degree+"C");
+        temperatureText.setText(String.format("%.1f",temp)+""+degree+"c");
         return view;
     }
 }
