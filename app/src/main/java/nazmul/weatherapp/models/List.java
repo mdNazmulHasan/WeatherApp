@@ -4,7 +4,9 @@ package nazmul.weatherapp.models;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class List {
+import java.io.Serializable;
+
+public class List implements Serializable {
 
     @SerializedName("id")
     @Expose

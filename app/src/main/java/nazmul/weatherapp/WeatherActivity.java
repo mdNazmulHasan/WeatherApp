@@ -1,13 +1,17 @@
 package nazmul.weatherapp;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import nazmul.weatherapp.adapters.WeatherAdapter;
+import nazmul.weatherapp.models.List;
 import nazmul.weatherapp.models.WeatherData;
 import nazmul.weatherapp.utils.RetrofitClient;
 import nazmul.weatherapp.webapi.WeatherApi;
@@ -19,6 +23,7 @@ public class WeatherActivity extends AppCompatActivity {
     WeatherApi weatherApi;
     ListView weatherdataListView;
     ProgressDialog progDailog;
+    public static String mapdata="mapdata";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +46,15 @@ public class WeatherActivity extends AppCompatActivity {
                 WeatherData weatherData=response.body();
                 WeatherAdapter weatherAdapter=new WeatherAdapter(WeatherActivity.this,weatherData.getList());
                 weatherdataListView.setAdapter(weatherAdapter);
+                weatherdataListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        Intent intent=new Intent(WeatherActivity.this,MapsActivity.class);
+                        List list= (List) parent.getItemAtPosition(position);
+                        intent.putExtra(mapdata,list);
+                        startActivity(intent);
+                    }
+                });
             }
 
             @Override
