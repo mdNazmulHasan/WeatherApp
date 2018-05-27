@@ -40,7 +40,7 @@ public class MyIntentService extends IntentService {
         String lng=bundle.getString("lng");
         String url="data/2.5/weather?lat="+lat+"&lon="+lng+"&appid=e384f9ac095b2109c751d95296f8ea76";
         weatherApi= RetrofitClient.getRetrofitClient().create(WeatherApi.class);
-        Call<CurrentWeather>currentWeatherCall=weatherApi.getCurrentWeather();
+        Call<CurrentWeather>currentWeatherCall=weatherApi.getCurrentWeather(url);
         currentWeatherCall.enqueue(new Callback<CurrentWeather>() {
             @Override
             public void onResponse(Call<CurrentWeather> call, Response<CurrentWeather> response) {
