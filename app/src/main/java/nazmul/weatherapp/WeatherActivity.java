@@ -1,6 +1,9 @@
 package nazmul.weatherapp;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -20,6 +23,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class WeatherActivity extends AppCompatActivity {
+    private static final int NOTIFICATION_REMINDER_NIGHT = 2;
     WeatherApi weatherApi;
     ListView weatherdataListView;
     ProgressDialog progDailog;
@@ -32,7 +36,16 @@ public class WeatherActivity extends AppCompatActivity {
         weatherdataListView=findViewById(R.id.weatherdataListView);
         progDailog=new ProgressDialog(this);
         getWeatherData();
+        setRepeatingNotification();
+    }
 
+    private void setRepeatingNotification() {
+        Intent notifyIntent = new Intent(this,MyReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast
+                (this, NOTIFICATION_REMINDER_NIGHT, notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        AlarmManager alarmManager = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,  System.currentTimeMillis(),
+                1000 * 60 * 60 * 24, pendingIntent);
     }
 
     private void getWeatherData() {

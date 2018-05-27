@@ -38,9 +38,18 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:parentActivityName=".WeatherActivity"
             android:name=".MapsActivity"
-            android:label="@string/title_activity_maps"></activity>
+            android:label="@string/title_activity_maps"
+            android:parentActivityName=".WeatherActivity" />
+
+        <receiver
+            android:name=".MyReceiver"
+            android:enabled="true"
+            android:exported="false" />
+
+        <service
+            android:name=".MyIntentService"
+            android:exported="false"></service>
     </application>
 
 </manifest>
