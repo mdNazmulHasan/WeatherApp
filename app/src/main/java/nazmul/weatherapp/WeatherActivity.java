@@ -33,7 +33,7 @@ public class WeatherActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_weather);
-        weatherdataListView=findViegit wById(R.id.weatherdataListView);
+        weatherdataListView=findViewById(R.id.weatherdataListView);
         progDailog=new ProgressDialog(this);
         getWeatherData();
         setRepeatingNotification();
