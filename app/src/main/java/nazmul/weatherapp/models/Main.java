@@ -4,9 +4,7 @@ package nazmul.weatherapp.models;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.io.Serializable;
-
-public class Main implements Serializable {
+public class Main {
 
     @SerializedName("temp")
     @Expose
@@ -23,12 +21,6 @@ public class Main implements Serializable {
     @SerializedName("temp_max")
     @Expose
     private Double tempMax;
-    @SerializedName("sea_level")
-    @Expose
-    private Double seaLevel;
-    @SerializedName("grnd_level")
-    @Expose
-    private Double grndLevel;
 
     public Double getTemp() {
         return temp;
@@ -68,22 +60,6 @@ public class Main implements Serializable {
 
     public void setTempMax(Double tempMax) {
         this.tempMax = tempMax;
-    }
-
-    public Double getSeaLevel() {
-        return seaLevel;
-    }
-
-    public void setSeaLevel(Double seaLevel) {
-        this.seaLevel = seaLevel;
-    }
-
-    public Double getGrndLevel() {
-        return grndLevel;
-    }
-
-    public void setGrndLevel(Double grndLevel) {
-        this.grndLevel = grndLevel;
     }
 
 }

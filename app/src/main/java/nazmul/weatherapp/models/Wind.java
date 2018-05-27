@@ -4,9 +4,7 @@ package nazmul.weatherapp.models;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.io.Serializable;
-
-public class Wind implements Serializable {
+public class Wind {
 
     @SerializedName("speed")
     @Expose
@@ -30,5 +28,4 @@ public class Wind implements Serializable {
     public void setDeg(Double deg) {
         this.deg = deg;
     }
-
 }

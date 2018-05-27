@@ -11,6 +11,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -142,6 +143,7 @@ public class WeatherActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<WeatherData> call, Throwable t) {
                 hiddenProgressDialog();
+                Log.e("error", "onFailure: "+t.getMessage() );
                 Toast.makeText(WeatherActivity.this, ""+t.getMessage(), Toast.LENGTH_SHORT).show();
 
             }
