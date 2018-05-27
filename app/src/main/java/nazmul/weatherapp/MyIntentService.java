@@ -35,6 +35,10 @@ public class MyIntentService extends IntentService {
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
     protected void onHandleIntent(Intent intent) {
+        Bundle bundle=intent.getBundleExtra("data");
+        String lat=bundle.getString("lat");
+        String lng=bundle.getString("lng");
+        String url="data/2.5/weather?lat="+lat+"&lon="+lng+"&appid=e384f9ac095b2109c751d95296f8ea76";
         weatherApi= RetrofitClient.getRetrofitClient().create(WeatherApi.class);
         Call<CurrentWeather>currentWeatherCall=weatherApi.getCurrentWeather();
         currentWeatherCall.enqueue(new Callback<CurrentWeather>() {
@@ -61,8 +65,7 @@ public class MyIntentService extends IntentService {
 
             }
         });
-        Bundle bundle=intent.getBundleExtra("data");
-        String lat=bundle.getString("lat");
+
 
     }
 }
