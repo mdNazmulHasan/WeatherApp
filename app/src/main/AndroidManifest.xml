@@ -42,13 +42,8 @@
             android:label="@string/title_activity_maps"
             android:parentActivityName=".WeatherActivity" />
 
-        <receiver
-            android:name=".MyReceiver"
-            android:enabled="true"
-            android:exported="false" />
-
         <service
-            android:name=".MyIntentService"
+            android:name=".WeatherJob"
             android:exported="false"></service>
     </application>
 

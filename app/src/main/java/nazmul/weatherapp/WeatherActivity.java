@@ -7,7 +7,6 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -18,6 +17,13 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.firebase.jobdispatcher.Constraint;
+import com.firebase.jobdispatcher.FirebaseJobDispatcher;
+import com.firebase.jobdispatcher.GooglePlayDriver;
+import com.firebase.jobdispatcher.Job;
+import com.firebase.jobdispatcher.Lifetime;
+import com.firebase.jobdispatcher.RetryStrategy;
+import com.firebase.jobdispatcher.Trigger;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -63,12 +69,33 @@ public class WeatherActivity extends AppCompatActivity {
                 }
                 lat=String.valueOf(locationResult.getLocations().get(0).getLatitude());
                 lng=String.valueOf(locationResult.getLocations().get(0).getLongitude());
-                setRepeatingNotification(lat,lng);
+                startJob(lat,lng);
 
 
             }
         };
 
+    }
+
+    private void startJob(String lat, String lng) {
+        FirebaseJobDispatcher dispatcher = new FirebaseJobDispatcher(new GooglePlayDriver(this));
+        Bundle bundle=new Bundle();
+        bundle.putString("lat",lat);
+        bundle.putString("lng",lng);
+
+        Job myJob = dispatcher.newJobBuilder()
+                .setService(WeatherJob.class)
+                .setTag("InfoJobService")
+                .setRecurring(true)
+                .setTrigger(Trigger.executionWindow(3 * 60, 5 * 60))
+                .setLifetime(Lifetime.UNTIL_NEXT_BOOT)
+                .setReplaceCurrent(false)
+                .setConstraints(Constraint.ON_ANY_NETWORK)
+                .setRetryStrategy(RetryStrategy.DEFAULT_LINEAR)
+                .setExtras(bundle)
+                .build();
+
+        dispatcher.mustSchedule(myJob);
     }
 
     protected void createLocationRequest() {
@@ -119,17 +146,6 @@ public class WeatherActivity extends AppCompatActivity {
         mFusedLocationClient.removeLocationUpdates(mLocationCallback);
     }
 
-    private void setRepeatingNotification(String lat, String lng) {
-        Intent notifyIntent = new Intent(this,MyReceiver.class);
-        notifyIntent.putExtra("lat",lat);
-        notifyIntent.putExtra("lng",lng);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast
-                (this, NOTIFICATION_REMINDER_NIGHT, notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        AlarmManager alarmManager = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,  System.currentTimeMillis(),
-                1000 * 60 * 60 * 24, pendingIntent);
-    }
-
     private void getWeatherData() {
         showprogessdialog();
         weatherApi= RetrofitClient.getRetrofitClient().create(WeatherApi.class);
@@ -155,7 +171,6 @@ public class WeatherActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<WeatherData> call, Throwable t) {
                 hiddenProgressDialog();
-                Log.e("error", "onFailure: "+t.getMessage() );
                 Toast.makeText(WeatherActivity.this, ""+t.getMessage(), Toast.LENGTH_SHORT).show();
 
             }
