@@ -1,13 +1,17 @@
 package nazmul.weatherapp;
 
+import android.annotation.TargetApi;
 import android.app.IntentService;
 import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 
 import nazmul.weatherapp.models.CurrentWeather;
@@ -26,6 +30,7 @@ import retrofit2.Response;
  */
 public class MyIntentService extends IntentService {
     private static final int NOTIFICATION_ID = 3;
+    private static final String CHANNEL_ID = "weather_app1";
     WeatherApi weatherApi;
 
     public MyIntentService() {
@@ -42,22 +47,37 @@ public class MyIntentService extends IntentService {
         weatherApi= RetrofitClient.getRetrofitClient().create(WeatherApi.class);
         Call<CurrentWeather>currentWeatherCall=weatherApi.getCurrentWeather(url);
         currentWeatherCall.enqueue(new Callback<CurrentWeather>() {
+            @TargetApi(Build.VERSION_CODES.O)
             @Override
             public void onResponse(Call<CurrentWeather> call, Response<CurrentWeather> response) {
                 CurrentWeather currentWeather=response.body();
-                double averageTemp=currentWeather.getMain().getTemp()-273.15;
-                Notification.Builder builder = new Notification.Builder(MyIntentService.this);
-                builder.setContentTitle("Weather App");
                 char degree = '\u00B0';
-                builder.setContentText("Current Temperature :"+String.format("%.1f",averageTemp)+""+degree+"c");
-                builder.setSmallIcon(R.mipmap.ic_launcher_round);
+                double averageTemp=currentWeather.getMain().getTemp()-273.15;
+
                 Intent notifyIntent = new Intent(MyIntentService.this, WeatherActivity.class);
                 PendingIntent pendingIntent = PendingIntent.getActivity(MyIntentService.this, 2, notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-                //to be able to launch your activity from the notification
-                builder.setContentIntent(pendingIntent);
-                Notification notificationCompat = builder.build();
-                NotificationManagerCompat managerCompat = NotificationManagerCompat.from(MyIntentService.this);
-                managerCompat.notify(NOTIFICATION_ID, notificationCompat);
+                NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(MyIntentService.this, CHANNEL_ID)
+                        .setSmallIcon(R.mipmap.ic_launcher_round)
+                        .setContentTitle("Weather App")
+                        .setContentText("Current Temperature :"+String.format("%.1f",averageTemp)+""+degree+"c")
+                        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                        .setContentIntent(pendingIntent)
+                        .setAutoCancel(true);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    CharSequence name = getString(R.string.channel_name);
+                    String description = getString(R.string.channel_description);
+                    int importance = NotificationManager.IMPORTANCE_DEFAULT;
+                    NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+                    channel.setDescription(description);
+                    // Register the channel with the system; you can't change the importance
+                    // or other notification behaviors after this
+                    NotificationManager notificationManager = getSystemService(NotificationManager.class);
+                    notificationManager.createNotificationChannel(channel);
+                    notificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+                }else{
+                    NotificationManagerCompat notificationManager = NotificationManagerCompat.from(MyIntentService.this);
+                    notificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+                }
             }
 
             @Override

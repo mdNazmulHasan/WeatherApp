@@ -1,11 +1,12 @@
 
 package nazmul.weatherapp.models;
 
+import java.io.Serializable;
 import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class CurrentWeather {
+public class CurrentWeather implements Serializable{
 
     @SerializedName("coord")
     @Expose
